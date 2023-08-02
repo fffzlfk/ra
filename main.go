@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -59,7 +60,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.cursor < len(m.entrys)-1 {
 				m.cursor++
 			}
-		case "enter", "l":
+		case "enter", "l", "right":
 			if len(m.entrys) <= 0 {
 				return m, nil
 			}
@@ -73,7 +74,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.cursor = 0
 			log.Printf("selected path: %s", m.selectedPath.Name())
 			return m, nil
+		case "h", "left":
+			index := strings.LastIndex(m.currentDir, "/")
+			m.currentDir = m.currentDir[:index]
+			m.updateFiles()
+			m.cursor = 0
+			log.Printf("selected path: %s", m.selectedPath.Name())
+			return m, nil
 		}
+
 	}
 	return m, nil
 }
